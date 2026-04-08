@@ -1,0 +1,86 @@
+{
+  "feature_columns": [
+    "Car_Age",
+    "Kilometers_Driven",
+    "Mileage",
+    "Engine",
+    "Power",
+    "Seats",
+    "Brand_encoded",
+    "Location_encoded",
+    "Fuel_Type_encoded",
+    "Transmission_encoded",
+    "Owner_Type_encoded"
+  ],
+  "categorical_cols": [
+    "Brand",
+    "Location",
+    "Fuel_Type",
+    "Transmission",
+    "Owner_Type"
+  ],
+  "threshold": 0.15,
+  "current_year": 2026,
+  "r2_score": 0.8921,
+  "mae": 1.55,
+  "brands": [
+    "Ambassador",
+    "Audi",
+    "BMW",
+    "Bentley",
+    "Chevrolet",
+    "Datsun",
+    "Fiat",
+    "Force",
+    "Ford",
+    "Honda",
+    "Hyundai",
+    "ISUZU",
+    "Isuzu",
+    "Jaguar",
+    "Jeep",
+    "Lamborghini",
+    "Land",
+    "Mahindra",
+    "Maruti",
+    "Mercedes-Benz",
+    "Mini",
+    "Mitsubishi",
+    "Nissan",
+    "Porsche",
+    "Renault",
+    "Skoda",
+    "Tata",
+    "Toyota",
+    "Volkswagen",
+    "Volvo"
+  ],
+  "locations": [
+    "Ahmedabad",
+    "Bangalore",
+    "Chennai",
+    "Coimbatore",
+    "Delhi",
+    "Hyderabad",
+    "Jaipur",
+    "Kochi",
+    "Kolkata",
+    "Mumbai",
+    "Pune"
+  ],
+  "fuel_types": [
+    "Diesel",
+    "Electric",
+    "Petrol"
+  ],
+  "transmissions": [
+    "Automatic",
+    "Manual"
+  ],
+  "owner_types": [
+    "First",
+    "Fourth & Above",
+    "Second",
+    "Third"
+  ]
+}

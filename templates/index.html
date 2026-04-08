@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Used Car Price Evaluator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>Used Car Price Evaluator</h1>
+            <p class="subtitle">Find out if that used car is worth the asking price</p>
+        </header>
+
+        <!-- Main Card -->
+        <main class="card">
+            <form id="car-form">
+                <!-- Row 1: Brand and Location -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="brand">Brand</label>
+                        <select id="brand" name="brand" required>
+                            <option value="">Select Brand</option>
+                            {% for brand in config.brands %}
+                            <option value="{{ brand }}">{{ brand }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <select id="location" name="location" required>
+                            <option value="">Select City</option>
+                            {% for loc in config.locations %}
+                            <option value="{{ loc }}">{{ loc }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Row 2: Year and Kilometers -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="year">Manufacturing Year</label>
+                        <input type="number" id="year" name="year" min="1998" max="2026" placeholder="e.g., 2018" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="kilometers_driven">Kilometers Driven</label>
+                        <input type="number" id="kilometers_driven" name="kilometers_driven" min="0" placeholder="e.g., 45000" required>
+                    </div>
+                </div>
+
+                <!-- Row 3: Fuel and Transmission -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fuel_type">Fuel Type</label>
+                        <select id="fuel_type" name="fuel_type" required>
+                            <option value="">Select Fuel Type</option>
+                            {% for fuel in config.fuel_types %}
+                            <option value="{{ fuel }}">{{ fuel }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="transmission">Transmission</label>
+                        <select id="transmission" name="transmission" required>
+                            <option value="">Select Transmission</option>
+                            {% for trans in config.transmissions %}
+                            <option value="{{ trans }}">{{ trans }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Row 4: Owner Type and Seats -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="owner_type">Owner Type</label>
+                        <select id="owner_type" name="owner_type" required>
+                            <option value="">Select Owner Type</option>
+                            {% for owner in config.owner_types %}
+                            <option value="{{ owner }}">{{ owner }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="seats">Seats</label>
+                        <input type="number" id="seats" name="seats" min="2" max="10" placeholder="e.g., 5" required>
+                    </div>
+                </div>
+
+                <!-- Row 5: Engine Specs -->
+                <div class="form-row three-cols">
+                    <div class="form-group">
+                        <label for="mileage">Mileage (kmpl)</label>
+                        <input type="number" id="mileage" name="mileage" step="0.01" min="0" placeholder="e.g., 18.5" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="engine">Engine (CC)</label>
+                        <input type="number" id="engine" name="engine" min="0" placeholder="e.g., 1200" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="power">Power (bhp)</label>
+                        <input type="number" id="power" name="power" step="0.01" min="0" placeholder="e.g., 82" required>
+                    </div>
+                </div>
+
+                <!-- Row 6: Listed Price -->
+                <div class="form-row">
+                    <div class="form-group full-width price-input">
+                        <label for="listed_price">Listed Price (in Lakhs)</label>
+                        <div class="input-with-prefix">
+                            <span class="prefix">Rs</span>
+                            <input type="number" id="listed_price" name="listed_price" step="0.01" min="0" placeholder="e.g., 5.5" required>
+                            <span class="suffix">Lakhs</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="submit-btn" id="submit-btn">
+                    <span class="btn-text">Evaluate Price</span>
+                    <span class="btn-loader" style="display: none;"></span>
+                </button>
+            </form>
+        </main>
+
+        <!-- Result Card (Hidden initially) -->
+        <div id="result-card" class="result-card hidden">
+            <div class="result-header">
+                <span class="result-icon" id="result-icon"></span>
+                <h2 id="result-verdict"></h2>
+            </div>
+            <div class="result-body">
+                <div class="price-comparison">
+                    <div class="price-item">
+                        <span class="price-label">Listed Price</span>
+                        <span class="price-value" id="listed-price-result"></span>
+                    </div>
+                    <div class="price-divider">vs</div>
+                    <div class="price-item">
+                        <span class="price-label">Fair Value</span>
+                        <span class="price-value" id="predicted-price-result"></span>
+                    </div>
+                </div>
+                <div class="deviation-bar-container">
+                    <div class="deviation-bar">
+                        <div class="deviation-fill" id="deviation-fill"></div>
+                    </div>
+                    <span class="deviation-text" id="deviation-text"></span>
+                </div>
+                <p class="result-message" id="result-message"></p>
+                <div class="confidence-badge" id="confidence-badge"></div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Model Accuracy: R<sup>2</sup> = {{ config.r2_score }} | MAE = Rs {{ config.mae }}L</p>
+            <p class="disclaimer">This is an ML-based estimate. Always verify with a professional.</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
