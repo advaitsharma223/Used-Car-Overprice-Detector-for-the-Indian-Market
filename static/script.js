@@ -84,7 +84,9 @@ document.addEventListener('DOMContentLoaded', function() {
     /**
      * Display the prediction result in the result card
      */
+    
     function displayResult(result) {
+        //console.log(result);
         const resultHeader = resultCard.querySelector('.result-header');
         const resultIcon = document.getElementById('result-icon');
         const resultVerdict = document.getElementById('result-verdict');
@@ -94,6 +96,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const deviationText = document.getElementById('deviation-text');
         const resultMessage = document.getElementById('result-message');
         const confidenceBadge = document.getElementById('confidence-badge');
+        const aiAnalysis = document.getElementById('ai-analysis');
+        aiAnalysis.textContent = result.ai_analysis;
+        
+        console.log(aiAnalysis);
 
         // Set verdict styling based on result
         resultHeader.className = 'result-header';

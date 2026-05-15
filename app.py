@@ -1,3 +1,16 @@
+import os
+from urllib import response
+from dotenv import load_dotenv
+import google.generativeai as genai
+
+load_dotenv()
+
+genai.configure(
+    api_key=os.getenv("GEMINI_API_KEY")
+)
+
+model_ai = genai.GenerativeModel("gemini-2.5-flash")
+
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 import joblib
@@ -18,7 +31,7 @@ with open('model/model_config.json', 'r') as f:
 
 print(f"Model loaded! R² Score: {config['r2_score']}")
 
-# ── Route: Home Page ────────────────────────────────────────────────────────
+#Route: Home Page
 @app.route('/')
 def home():
     return render_template('index.html', config=config)
@@ -91,6 +104,36 @@ def predict():
             verdict = 'Underpriced'
         else:
             verdict = 'Fair Price'
+        
+        prompt = f"""
+        A machine learning model analyzed this used car listing for the Indian market.
+
+        Car Details:
+        Brand: {brand}
+        Location: {location}
+        Year: {year}
+        Fuel Type: {fuel_type}
+        Transmission: {transmission}
+        Kilometers Driven: {km_driven}
+        Mileage: {mileage} kmpl
+        Engine: {engine} CC
+        Power: {power} bhp
+        Seats: {seats}
+
+        Listed Price: Rs {listed_price:.2f} Lakhs
+        Predicted Fair Price: Rs {predicted_price:.2f} Lakhs
+
+        Prediction Verdict:
+        {verdict}
+
+        Deviation from estimated fair value:
+        {deviation_percent}%
+
+        Explain in 3-4 professional lines why this car may be classified this way. Mention factors like depreciation, mileage, fuel type, age, and market trends if relevant.
+        """
+        response = model_ai.generate_content(prompt)
+
+        ai_analysis = response.text
 
         abs_deviation = abs(deviation)
         if abs_deviation < 0.05:
@@ -101,7 +144,9 @@ def predict():
             confidence = 'medium'
         else:
             confidence = 'low'
-
+        
+        print("AI ANALYSIS:", ai_analysis)
+        
         return jsonify({
             'success': True,
             'predicted_price': round(predicted_price, 2),
@@ -109,7 +154,8 @@ def predict():
             'verdict': verdict,
             'deviation_percent': deviation_percent,
             'confidence': confidence,
-            'message': get_verdict_message(verdict, deviation_percent, predicted_price)
+            'message': get_verdict_message(verdict, deviation_percent, predicted_price),
+            'ai_analysis': ai_analysis
         })
 
     except Exception as e:
@@ -117,7 +163,6 @@ def predict():
             'success': False,
             'error': str(e)
         }), 400
-
 
 def get_verdict_message(verdict, deviation_percent, predicted_price):
     if verdict == 'Overpriced':
@@ -127,8 +172,7 @@ def get_verdict_message(verdict, deviation_percent, predicted_price):
     else:
         return f"This car is fairly priced. The estimated fair value is Rs {predicted_price:.2f} Lakhs, which is within normal range."
 
-
-# ── Route: Get Options ──────────────────────────────────────────────────────
+#Route: Get Options
 @app.route('/options', methods=['GET'])
 def get_options():
     return jsonify({
@@ -139,8 +183,7 @@ def get_options():
         'owner_types': config['owner_types']
     })
 
-
-# ── Run the App ─────────────────────────────────────────────────────────────
+#Run the App
 if __name__ == '__main__':
     print("\n" + "=" * 50)
     print("Starting Used Car Price Evaluator")

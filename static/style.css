@@ -384,3 +384,23 @@ input::placeholder {
         font-size: 1.25rem;
     }
 }
+
+.ai-analysis-container {
+    margin-top: 20px;
+    padding: 16px;
+    background: #f8f9fc;
+    border-radius: 12px;
+    border-left: 4px solid #4f46e5;
+}
+
+.ai-analysis-container h3 {
+    margin-bottom: 10px;
+    font-size: 1rem;
+    color: #333;
+}
+
+#ai-analysis {
+    color: #555;
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
